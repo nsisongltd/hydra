@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  devices   Device[]
+}
+
+model Device {
+  id              String    @id @default(uuid())
+  deviceId        String    @unique // Unique identifier from Android device
+  name            String
+  model           String
+  manufacturer    String
+  osVersion      String
+  lastSeen       DateTime
+  isOnline       Boolean   @default(false)
+  isLocked       Boolean   @default(false)
+  batteryLevel   Int
+  userId         String
+  user           User      @relation(fields: [userId], references: [id])
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  activities     Activity[]
+}
+
+model Activity {
+  id        String   @id @default(uuid())
+  type      ActivityType
+  details   Json
+  deviceId  String
+  device    Device   @relation(fields: [deviceId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum ActivityType {
+  DEVICE_ENROLLED
+  DEVICE_CONNECTED
+  DEVICE_DISCONNECTED
+  DEVICE_LOCKED
+  DEVICE_UNLOCKED
+  SETTINGS_CHANGED
+  POLICY_UPDATED
+} 

@@ -1,0 +1,38 @@
+# Smali files
+*.smali
+*.dex
+
+# EJS files
+*.ejs
+
+# JavaScript files
+*.js
+*.jsx
+npm-debug.log
+yarn-error.log
+
+# Other files (you can customize this section further)
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+.env
+*.local
+*.bak
+*.swp
+
+# Ignore build and output directories
+dist/
+build/
+out/
+target/
+maindb.json
+
+# Ignore IDE-specific files (customize according to your IDE)
+.vscode/
+node_modules/
+.idea/
+hi
+*.sublime-workspace
+*.sublime-project
+hide.c
