@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,25 +18,19 @@ model User {
   role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  devices   Device[]
 }
 
 model Device {
-  id              String    @id @default(uuid())
-  deviceId        String    @unique // Unique identifier from Android device
-  name            String
-  model           String
-  manufacturer    String
-  osVersion      String
-  lastSeen       DateTime
-  isOnline       Boolean   @default(false)
-  isLocked       Boolean   @default(false)
-  batteryLevel   Int
-  userId         String
-  user           User      @relation(fields: [userId], references: [id])
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  activities     Activity[]
+  id            String     @id @default(uuid())
+  name          String
+  model         String
+  androidId     String     @unique
+  status        DeviceStatus @default(OFFLINE)
+  batteryLevel  Int       @default(0)
+  lastSeen      DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  activities    Activity[]
 }
 
 model Activity {
@@ -46,8 +43,14 @@ model Activity {
 }
 
 enum Role {
-  ADMIN
   USER
+  ADMIN
+}
+
+enum DeviceStatus {
+  ONLINE
+  OFFLINE
+  LOCKED
 }
 
 enum ActivityType {
@@ -56,6 +59,6 @@ enum ActivityType {
   DEVICE_DISCONNECTED
   DEVICE_LOCKED
   DEVICE_UNLOCKED
+  BATTERY_UPDATE
   SETTINGS_CHANGED
-  POLICY_UPDATED
 } 

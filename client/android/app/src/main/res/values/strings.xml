@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hydra MDM</string>
+    <string name="app_description">Secure device management solution for research and ethical use</string>
+    <string name="device_admin_label">Hydra Device Admin</string>
+    <string name="device_admin_description">Enable device administration to allow secure device management</string>
+    <string name="device_admin_enabled">Device administration enabled</string>
+    <string name="device_admin_disabled">Device administration disabled</string>
+    <string name="status_active">Device management is active</string>
+    <string name="status_inactive">Device management is not active</string>
+    <string name="button_activate_admin">Enable Device Management</string>
+    <string name="button_start_monitoring">Start Monitoring</string>
+    <string name="notification_title">Device Management Active</string>
+    <string name="notification_text">Monitoring device security and status</string>
+</resources> 
