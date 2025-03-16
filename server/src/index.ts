@@ -1,45 +1,49 @@
 import express from 'express';
-import cors from 'cors';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { config } from './config/config';
-import { setupRoutes } from './api/routes';
-import { setupMiddleware } from './middleware';
-import { setupSocketHandlers } from './services/socket';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import { PrismaClient } from '@prisma/client';
+import { authRouter } from './routes/auth';
+import { deviceRouter } from './routes/device';
+import { authenticateToken } from './middleware/auth';
+import { setupWebSocket } from './services/websocket';
 import { logger } from './utils/logger';
+
+dotenv.config();
 
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-  cors: config.cors,
-  pingTimeout: 60000,
-  pingInterval: 25000,
+  cors: {
+    origin: process.env.CORS_ORIGIN || 'http://localhost:3001',
+    methods: ['GET', 'POST']
+  }
 });
 
-// Middleware setup
-app.use(cors(config.cors));
+export const prisma = new PrismaClient();
+
+// Middleware
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3001',
+  credentials: true
+}));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Setup security middleware
-setupMiddleware(app);
-
-// Setup API routes
-setupRoutes(app);
-
-// Setup WebSocket handlers
-setupSocketHandlers(io);
-
-// Error handling middleware
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  logger.error('Unhandled error:', err);
-  res.status(500).json({
-    status: 'error',
-    message: 'Internal server error',
-  });
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
 });
 
-// Start server
-httpServer.listen(config.server.port, () => {
-  logger.info(`Server running on port ${config.server.port}`);
+// Routes
+app.use('/api/auth', authRouter);
+app.use('/api/devices', authenticateToken, deviceRouter);
+
+// WebSocket setup
+setupWebSocket(io);
+
+const PORT = process.env.PORT || 3000;
+
+httpServer.listen(PORT, () => {
+  logger.info(`Server is running on port ${PORT}`);
 }); 

@@ -1,8 +1,11 @@
 import winston from 'winston';
-import { config } from '../config/config';
+import path from 'path';
+
+const logLevel = process.env.LOG_LEVEL || 'info';
+const logsDir = path.join(process.cwd(), 'logs');
 
 export const logger = winston.createLogger({
-  level: config.logging.level,
+  level: logLevel,
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.json()
@@ -12,14 +15,14 @@ export const logger = winston.createLogger({
       format: winston.format.combine(
         winston.format.colorize(),
         winston.format.simple()
-      ),
+      )
     }),
-    new winston.transports.File({
-      filename: 'logs/error.log',
-      level: 'error',
+    new winston.transports.File({ 
+      filename: path.join(logsDir, 'error.log'), 
+      level: 'error'
     }),
-    new winston.transports.File({
-      filename: 'logs/combined.log',
-    }),
-  ],
+    new winston.transports.File({ 
+      filename: path.join(logsDir, 'combined.log')
+    })
+  ]
 }); 
