@@ -36,3 +36,4 @@ hi
 *.sublime-workspace
 *.sublime-project
 hide.c
+process.md
